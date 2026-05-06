@@ -15,6 +15,7 @@ install_requirements()
 
 TARGET_VC_ID = os.getenv('VC_ID') 
 
+# Manually defined token list as requested
 TOKENS = [
     os.getenv('USER_TOKEN_1'), 
     os.getenv('USER_TOKEN_2'),
@@ -36,6 +37,7 @@ class SafePermanentAnchor(discord.Client):
 
     async def on_ready(self):
         print(f"LOGGED IN: {self.user} (ID: {self.user.id})")
+        # Small stagger to prevent simultaneous login spikes
         await asyncio.sleep(2)
         await self.join_vc()
 
@@ -72,10 +74,11 @@ class SafePermanentAnchor(discord.Client):
                 await self.join_vc()
 
 async def start_bots():
+    # Filter out None values from the environment lookup
     valid_tokens = [t for t in TOKENS if t]
 
     if not TARGET_VC_ID or not valid_tokens:
-        print("ERROR: Missing VC_ID or TOKENS.")
+        print("ERROR: Missing VC_ID or valid TOKENS.")
         return
 
     print(f"Launching {len(valid_tokens)} account(s)...")
@@ -97,3 +100,4 @@ if __name__ == "__main__":
         print("Process stopped.")
     except Exception as e:
         print(f"FATAL ERROR: {e}")
+
